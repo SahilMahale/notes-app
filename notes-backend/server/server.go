@@ -53,7 +53,12 @@ func (B *notesService) initMiddleware() {
 	}))
 }
 func (B *notesService) GetNotes(c *fiber.Ctx) error {
-	return nil
+	notesCtrl := notes.NewNoteController(B.DbInterface)
+	notesList, err := notesCtrl.GetAllNotes()
+	if err.Err != nil {
+		return c.Status(err.HttpCode).SendString(err.Err.Error())
+	}
+	return c.Status(fiber.StatusAccepted).JSON(notesList)
 }
 
 func (B *notesService) DeleteNote(c *fiber.Ctx) error {
@@ -89,9 +94,10 @@ func (B *notesService) StartNotesService() {
 	// Unauthenticated routes
 	userGroup := B.app.Group("/notes")
 	userGroup.Post("/create", B.CreateNote)
-	userGroup.Post("/update/:noteID", B.UpdateNote)
-	userGroup.Post("/delete/:noteID", B.DeleteNote)
-	userGroup.Post("/get", B.GetNotes)
+	userGroup.Patch("/update/:noteID", B.UpdateNote)
+	userGroup.Delete("/delete/:noteID", B.DeleteNote)
+	userGroup.Get("/get", B.GetNotes)
+	// userGroup.Post("/get/:noteId", B.GetNoteByID)
 
 	/* adminGroup := B.app.Group("/admin")
 	adminGroup.Post("/signup", B.CreateUser)
