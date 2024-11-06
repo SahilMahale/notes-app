@@ -1,0 +1,15 @@
+meta {
+  name: Get-note-by-ID
+  type: http
+  seq: 6
+}
+
+get {
+  url: http://127.0.0.1:8001/notes/get/:noteID
+  body: none
+  auth: none
+}
+
+params:path {
+  noteID: e90d9788-3cc2-4a63-a99f-5e278c5260f9
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Update-note
+  type: http
+  seq: 5
+}
+
+patch {
+  url: http://127.0.0.1:8001/notes/update/:noteID
+  body: json
+  auth: none
+}
+
+params:path {
+  noteID: bf2b09fa-1172-436f-9042-55d6c26f47be
+}
+
+body:json {
+  {
+    "body": "sahil body only3"
+  }
+}
