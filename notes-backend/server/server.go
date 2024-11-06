@@ -1,6 +1,8 @@
 package server
 
 import (
+	"fmt"
+
 	"github.com/SahilMahale/notes-backend/internal/db"
 	"github.com/SahilMahale/notes-backend/internal/notes"
 	"github.com/SahilMahale/notes-backend/models"
@@ -58,11 +60,33 @@ func (B *notesService) GetNotes(c *fiber.Ctx) error {
 	if err.Err != nil {
 		return c.Status(err.HttpCode).SendString(err.Err.Error())
 	}
-	return c.Status(fiber.StatusAccepted).JSON(notesList)
+	return c.Status(fiber.StatusOK).JSON(notesList)
+}
+
+func (B *notesService) GetNoteByID(c *fiber.Ctx) error {
+	noteID := ""
+	if noteID = c.Params("noteID"); noteID == "" {
+		return c.Status(fiber.StatusBadRequest).SendString("Error: notedID not specified")
+	}
+	notesCtrl := notes.NewNoteController(B.DbInterface)
+	note, err := notesCtrl.GetNote(noteID)
+	if err.Err != nil {
+		return c.Status(err.HttpCode).SendString(err.Err.Error())
+	}
+	return c.Status(fiber.StatusOK).JSON(note)
 }
 
 func (B *notesService) DeleteNote(c *fiber.Ctx) error {
-	return nil
+	noteID := ""
+	if noteID = c.Params("noteID"); noteID == "" {
+		return c.Status(fiber.StatusBadRequest).SendString("Error: notedID not specified")
+	}
+	notesCtrl := notes.NewNoteController(B.DbInterface)
+	err := notesCtrl.DeleteNote(noteID)
+	if err.Err != nil {
+		return c.Status(err.HttpCode).SendString(err.Err.Error())
+	}
+	return c.Status(fiber.StatusOK).SendString(fmt.Sprintf("Note with notedID: %s is successfully deleted.\n", noteID))
 }
 
 func (B *notesService) CreateNote(c *fiber.Ctx) error {
@@ -72,7 +96,7 @@ func (B *notesService) CreateNote(c *fiber.Ctx) error {
 		return err
 	}
 	noteCtrl := notes.NewNoteController(B.DbInterface)
-	noteID, err := noteCtrl.CreateBooking(note.Title, note.Body)
+	noteID, err := noteCtrl.CreateNote(note.Title, note.Body)
 	if err.Err != nil {
 		return c.Status(err.HttpCode).SendString(err.Err.Error())
 	}
@@ -86,7 +110,23 @@ func (B *notesService) CreateNote(c *fiber.Ctx) error {
 }
 
 func (B *notesService) UpdateNote(c *fiber.Ctx) error {
-	return nil
+	var notesCtrl notes.NotesOps
+	noteID := ""
+	if noteID = c.Params("noteID"); noteID == "" {
+		return c.Status(fiber.StatusBadRequest).SendString("Error: notedID not specified")
+	}
+
+	note := new(models.NotePatchRequest)
+
+	if err := c.BodyParser(note); err != nil {
+		return err
+	}
+	notesCtrl = notes.NewNoteController(B.DbInterface)
+	noteResp, err := notesCtrl.UpdateNote(noteID, *note)
+	if err.Err != nil {
+		return c.Status(err.HttpCode).SendString(err.Err.Error())
+	}
+	return c.Status(fiber.StatusAccepted).JSON(noteResp)
 }
 
 func (B *notesService) StartNotesService() {
@@ -97,7 +137,7 @@ func (B *notesService) StartNotesService() {
 	userGroup.Patch("/update/:noteID", B.UpdateNote)
 	userGroup.Delete("/delete/:noteID", B.DeleteNote)
 	userGroup.Get("/get", B.GetNotes)
-	// userGroup.Post("/get/:noteId", B.GetNoteByID)
+	userGroup.Get("/get/:noteId", B.GetNoteByID)
 
 	/* adminGroup := B.app.Group("/admin")
 	adminGroup.Post("/signup", B.CreateUser)
