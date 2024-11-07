@@ -1,18 +1,33 @@
 package server
 
 import (
+	"crypto/rsa"
 	"fmt"
+	"os"
 
 	"github.com/SahilMahale/notes-backend/internal/db"
 	"github.com/SahilMahale/notes-backend/internal/notes"
+	"github.com/SahilMahale/notes-backend/internal/user"
 	"github.com/SahilMahale/notes-backend/models"
+	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/golang-jwt/jwt/v5"
 )
+
+var (
+	privateKey *rsa.PrivateKey
+	publicKey  *rsa.PublicKey
+)
+
+type MyCustomClaims struct {
+	Name string `json:"name"`
+	jwt.RegisteredClaims
+}
 
 type notesService struct {
 	app          *fiber.App
@@ -54,6 +69,32 @@ func (B *notesService) initMiddleware() {
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 	}))
 }
+
+func (B *notesService) initAuth() {
+	secretsFolderPath := os.Getenv("APP_AUTH")
+	if secretsFolderPath == "no-auth" || secretsFolderPath == "" {
+		// run app without jwt auth
+		return
+	}
+	privateKeyPath := fmt.Sprintf("%s/private_key.pem", secretsFolderPath)
+	publicKeyPath := fmt.Sprintf("%s/public_key.pem.pub", secretsFolderPath)
+	err := readPrivateKeyFile(privateKeyPath)
+	if err != nil {
+		panic(err)
+	}
+	err = readPublicKeyFile(publicKeyPath)
+	if err != nil {
+		panic(err)
+	}
+	B.app.Use(jwtware.New(jwtware.Config{
+		SigningKey: jwtware.SigningKey{
+			JWTAlg: jwtware.RS256,
+			Key:    publicKey,
+		},
+		ContextKey: "acces-key-token",
+	}))
+}
+
 func (B *notesService) GetNotes(c *fiber.Ctx) error {
 	notesCtrl := notes.NewNoteController(B.DbInterface)
 	notesList, err := notesCtrl.GetAllNotes()
@@ -129,30 +170,66 @@ func (B *notesService) UpdateNote(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusAccepted).JSON(noteResp)
 }
 
+func (B *notesService) CreateUser(c *fiber.Ctx) error {
+	var userCtrl user.UserOps
+	u := new(models.UserSignup)
+
+	if err := c.BodyParser(u); err != nil {
+		return err
+	}
+
+	userCtrl = user.NewUserController(B.DbInterface)
+
+	errP := userCtrl.CreateUser(u.Username, u.Email, u.Password)
+	if errP.Err != nil {
+		return c.Status(errP.HttpCode).SendString(errP.Err.Error())
+	}
+
+	return c.SendStatus(fiber.StatusCreated)
+}
+
+func (B *notesService) LoginUser(c *fiber.Ctx) error {
+	var userCtrl user.UserOps
+	u := new(models.UserSignin)
+	if err := c.BodyParser(u); err != nil {
+		return err
+	}
+	userCtrl = user.NewUserController(B.DbInterface)
+
+	_, err := userCtrl.LoginUser(u.Username, u.Password)
+	if err.Err != nil {
+		return c.Status(err.HttpCode).SendString(err.Err.Error())
+	}
+
+	// Create a token based on user
+	atoken, errp := makeTokenWithClaims(u.Username)
+
+	if errp != nil {
+		return c.Status(fiber.StatusInternalServerError).SendString(errp.Error())
+	}
+
+	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"auth_token": atoken})
+}
+
 func (B *notesService) StartNotesService() {
 	B.initMiddleware()
 	// Unauthenticated routes
-	userGroup := B.app.Group("/notes")
-	userGroup.Post("/create", B.CreateNote)
-	userGroup.Patch("/update/:noteID", B.UpdateNote)
-	userGroup.Delete("/delete/:noteID", B.DeleteNote)
-	userGroup.Get("/get", B.GetNotes)
-	userGroup.Get("/get/:noteId", B.GetNoteByID)
-
-	/* adminGroup := B.app.Group("/admin")
-	adminGroup.Post("/signup", B.CreateUser)
-	adminGroup.Post("/signin", B.LoginUser) */
+	userGroup := B.app.Group("/user")
+	userGroup.Post("/signup", B.CreateUser)
+	userGroup.Post("/signin", B.LoginUser)
 
 	B.app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Booking APP Service is Running!")
 	})
-
+	B.initAuth()
 	// authenticated routes
-	/* userGroup.Get("/info", B.GetAllUsers)
-	bookingGroup := B.app.Group("/bookings")
-	bookingGroup.Get("", B.GetBookings)
-	bookingGroup.Post("", B.BookTickets)
-	bookingGroup.Delete("/:bookID", B.DeleteBooking) */
+
+	notesGroup := B.app.Group("/notes")
+	notesGroup.Post("/create", B.CreateNote)
+	notesGroup.Patch("/update/:noteID", B.UpdateNote)
+	notesGroup.Delete("/delete/:noteID", B.DeleteNote)
+	notesGroup.Get("/get", B.GetNotes)
+	notesGroup.Get("/get/:noteId", B.GetNoteByID)
 
 	err := B.app.Listen(B.ip)
 	if err != nil {
