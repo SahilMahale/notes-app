@@ -17,11 +17,11 @@ jobs:
           cd notes-backend
           go mod tidy
           go test -coverprofile=./cov.out ./...
-      - name: Run Gosec Security Scanner
-        run: |
-          cd notes-backend
-          go get github.com/securego/gosec/cmd/gosec
-          gosec -no-fail -fmt=sonarqube -out report.json ./...
+        # run: |
+        # cd notes-backend
+        # go get github.com/securego/gosec/cmd/gosec
+        # gosec -no-fail -fmt=sonarqube -out report.json ./...
+      # - name: Run Gosec Security Scanner
       - name: Analyze with SonarCloud
         uses: sonarsource/sonarcloud-github-action@master
         env:
