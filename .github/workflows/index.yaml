@@ -14,10 +14,12 @@ jobs:
           go-version: 1.23.x
       - name: Run unit Tests
         run: |
+          cd notes-backend
           go mod tidy
           go test -coverprofile=./cov.out ./...
       - name: Run Gosec Security Scanner
         run: |
+          cd notes-backend
           go get github.com/securego/gosec/cmd/gosec
           gosec -no-fail -fmt=sonarqube -out report.json ./...
       - name: Analyze with SonarCloud
