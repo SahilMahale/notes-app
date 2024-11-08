@@ -24,6 +24,7 @@ jobs:
       # - name: Run Gosec Security Scanner
       - name: Analyze with SonarCloud
         run: |
+          cd notes-backend
           echo "Current dir: $(pwd)"
         # uses: sonarsource/sonarcloud-github-action@master
         env:
