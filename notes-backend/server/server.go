@@ -30,10 +30,9 @@ type MyCustomClaims struct {
 }
 
 type notesService struct {
-	app          *fiber.App
-	DbInterface  db.DbConnection
-	ip           string
-	totalTickets uint
+	app         *fiber.App
+	DbInterface db.DbConnection
+	ip          string
 }
 
 type notesServicer interface {
