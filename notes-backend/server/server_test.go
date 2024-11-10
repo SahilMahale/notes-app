@@ -1,62 +1,75 @@
 package server
 
 import (
-	"reflect"
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"net/http/httptest"
 	"testing"
 
-	"github.com/SahilMahale/notes-backend/internal/db"
+	"github.com/SahilMahale/notes-backend/internal/helper"
+	"github.com/SahilMahale/notes-backend/internal/mocks"
+	"github.com/SahilMahale/notes-backend/models"
 	"github.com/gofiber/fiber/v2"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestNewNotesService(t *testing.T) {
-	type args struct {
-		appname string
-		ip      string
-		db      db.DbConnection
-	}
-	tests := []struct {
-		name string
-		args args
-		want notesService
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewNotesService(tt.args.appname, tt.args.ip, tt.args.db); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewNotesService() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+func setupTestServer(t *testing.T) (*notesService, *mocks.UserOps, *mocks.NotesOps) {
+	userCtrl := mocks.NewUserOps(t)
+	notesCtrl := mocks.NewNotesOps(t)
+	service := NewNotesService("test-app", ":8001", userCtrl, notesCtrl)
+	userGroup := service.app.Group("/user")
+	userGroup.Post("/signup", service.CreateUser)
+	userGroup.Post("/signin", service.LoginUser)
+	return &service, userCtrl, notesCtrl
 }
 
-func Test_notesService_GetNotes(t *testing.T) {
-	type fields struct {
-		app         *fiber.App
-		DbInterface db.DbConnection
-		ip          string
-	}
-	type args struct {
-		c *fiber.Ctx
-	}
+func Test_notesService_CreateUser(t *testing.T) {
+	service, uMock, _ := setupTestServer(t)
 	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
+		description string
+		userReq     models.UserSignup
+		mockMyerror helper.MyHTTPErrors
 	}{
-		// TODO: Add test cases.
+		{
+			description: "successful user creation",
+			userReq: models.UserSignup{
+				Username: "testuser",
+				Email:    "test@example.com",
+				Password: "password123",
+			},
+			mockMyerror: helper.MyHTTPErrors{
+				Err:      nil,
+				HttpCode: fiber.StatusCreated,
+			},
+		},
+		{
+			description: "failed user creation",
+			userReq: models.UserSignup{
+				Username: "testuser",
+				Email:    "test@example.com",
+				Password: "password123",
+			},
+			mockMyerror: helper.MyHTTPErrors{
+				Err:      fmt.Errorf("entry already exists"),
+				HttpCode: fiber.StatusBadRequest,
+			},
+		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			B := &notesService{
-				app:         tt.fields.app,
-				DbInterface: tt.fields.DbInterface,
-				ip:          tt.fields.ip,
-			}
-			if err := B.GetNotes(tt.args.c); (err != nil) != tt.wantErr {
-				t.Errorf("notesService.GetNotes() error = %v, wantErr %v", err, tt.wantErr)
-			}
+
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			uMock.On("CreateUser", test.userReq.Username, test.userReq.Email, test.userReq.Password).
+				Return(test.mockMyerror).Once()
+
+			jsonBody, _ := json.Marshal(test.userReq)
+			req := httptest.NewRequest("POST", "/user/signup", bytes.NewReader(jsonBody))
+			req.Header.Set("Content-Type", "application/json")
+
+			resp, err := service.app.Test(req)
+			assert.NoError(t, err)
+			fmt.Println("wtf", resp)
+			assert.Equal(t, test.mockMyerror.HttpCode, resp.StatusCode)
 		})
 	}
 }

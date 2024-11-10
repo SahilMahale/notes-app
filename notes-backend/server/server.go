@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/SahilMahale/notes-backend/internal/db"
 	"github.com/SahilMahale/notes-backend/internal/notes"
 	"github.com/SahilMahale/notes-backend/internal/user"
 	"github.com/SahilMahale/notes-backend/models"
@@ -30,9 +29,10 @@ type MyCustomClaims struct {
 }
 
 type notesService struct {
-	app         *fiber.App
-	DbInterface db.DbConnection
-	ip          string
+	app       *fiber.App
+	ip        string
+	notesCtrl notes.NotesOps
+	userCtrl  user.UserOps
 }
 
 type notesServicer interface {
@@ -43,15 +43,16 @@ type notesServicer interface {
 	StartNotesService(c *fiber.Ctx) error
 }
 
-func NewNotesService(appname, ip string, db db.DbConnection) notesService {
+func NewNotesService(appname, ip string, userCtrl user.UserOps, notesCtrl notes.NotesOps) notesService {
 	return notesService{
 		app: fiber.New(fiber.Config{
 			AppName:       appname,
 			StrictRouting: true,
 			ServerHeader:  "NotesService",
 		}),
-		ip:          ip,
-		DbInterface: db,
+		ip:        ip,
+		userCtrl:  userCtrl,
+		notesCtrl: notesCtrl,
 	}
 }
 
@@ -95,8 +96,7 @@ func (B *notesService) initAuth() {
 }
 
 func (B *notesService) GetNotes(c *fiber.Ctx) error {
-	notesCtrl := notes.NewNoteController(B.DbInterface)
-	notesList, err := notesCtrl.GetAllNotes()
+	notesList, err := B.notesCtrl.GetAllNotes()
 	if err.Err != nil {
 		return c.Status(err.HttpCode).SendString(err.Err.Error())
 	}
@@ -108,8 +108,7 @@ func (B *notesService) GetNoteByID(c *fiber.Ctx) error {
 	if noteID = c.Params("noteID"); noteID == "" {
 		return c.Status(fiber.StatusBadRequest).SendString("Error: notedID not specified")
 	}
-	notesCtrl := notes.NewNoteController(B.DbInterface)
-	note, err := notesCtrl.GetNote(noteID)
+	note, err := B.notesCtrl.GetNote(noteID)
 	if err.Err != nil {
 		return c.Status(err.HttpCode).SendString(err.Err.Error())
 	}
@@ -121,8 +120,7 @@ func (B *notesService) DeleteNote(c *fiber.Ctx) error {
 	if noteID = c.Params("noteID"); noteID == "" {
 		return c.Status(fiber.StatusBadRequest).SendString("Error: notedID not specified")
 	}
-	notesCtrl := notes.NewNoteController(B.DbInterface)
-	err := notesCtrl.DeleteNote(noteID)
+	err := B.notesCtrl.DeleteNote(noteID)
 	if err.Err != nil {
 		return c.Status(err.HttpCode).SendString(err.Err.Error())
 	}
@@ -135,8 +133,7 @@ func (B *notesService) CreateNote(c *fiber.Ctx) error {
 	if err := c.BodyParser(note); err != nil {
 		return err
 	}
-	noteCtrl := notes.NewNoteController(B.DbInterface)
-	noteID, err := noteCtrl.CreateNote(note.Title, note.Body)
+	noteID, err := B.notesCtrl.CreateNote(note.Title, note.Body)
 	if err.Err != nil {
 		return c.Status(err.HttpCode).SendString(err.Err.Error())
 	}
@@ -150,7 +147,6 @@ func (B *notesService) CreateNote(c *fiber.Ctx) error {
 }
 
 func (B *notesService) UpdateNote(c *fiber.Ctx) error {
-	var notesCtrl notes.NotesOps
 	noteID := ""
 	if noteID = c.Params("noteID"); noteID == "" {
 		return c.Status(fiber.StatusBadRequest).SendString("Error: notedID not specified")
@@ -161,8 +157,7 @@ func (B *notesService) UpdateNote(c *fiber.Ctx) error {
 	if err := c.BodyParser(note); err != nil {
 		return err
 	}
-	notesCtrl = notes.NewNoteController(B.DbInterface)
-	noteResp, err := notesCtrl.UpdateNote(noteID, *note)
+	noteResp, err := B.notesCtrl.UpdateNote(noteID, *note)
 	if err.Err != nil {
 		return c.Status(err.HttpCode).SendString(err.Err.Error())
 	}
@@ -170,16 +165,13 @@ func (B *notesService) UpdateNote(c *fiber.Ctx) error {
 }
 
 func (B *notesService) CreateUser(c *fiber.Ctx) error {
-	var userCtrl user.UserOps
 	u := new(models.UserSignup)
 
 	if err := c.BodyParser(u); err != nil {
 		return err
 	}
 
-	userCtrl = user.NewUserController(B.DbInterface)
-
-	errP := userCtrl.CreateUser(u.Username, u.Email, u.Password)
+	errP := B.userCtrl.CreateUser(u.Username, u.Email, u.Password)
 	if errP.Err != nil {
 		return c.Status(errP.HttpCode).SendString(errP.Err.Error())
 	}
@@ -188,14 +180,12 @@ func (B *notesService) CreateUser(c *fiber.Ctx) error {
 }
 
 func (B *notesService) LoginUser(c *fiber.Ctx) error {
-	var userCtrl user.UserOps
 	u := new(models.UserSignin)
 	if err := c.BodyParser(u); err != nil {
 		return err
 	}
-	userCtrl = user.NewUserController(B.DbInterface)
 
-	_, err := userCtrl.LoginUser(u.Username, u.Password)
+	_, err := B.userCtrl.LoginUser(u.Username, u.Password)
 	if err.Err != nil {
 		return c.Status(err.HttpCode).SendString(err.Err.Error())
 	}
