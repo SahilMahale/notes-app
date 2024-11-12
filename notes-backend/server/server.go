@@ -30,9 +30,9 @@ type MyCustomClaims struct {
 
 type notesService struct {
 	app       *fiber.App
-	ip        string
 	notesCtrl notes.NotesOps
 	userCtrl  user.UserOps
+	ip        string
 }
 
 type notesServicer interface {
