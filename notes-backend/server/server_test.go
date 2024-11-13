@@ -142,6 +142,59 @@ func TestCreateNote(t *testing.T) {
 	}
 }
 
+func TestGetNoteByID(t *testing.T) {
+	service, _, nMock := setupTestServer(t)
+
+	mockNotes := models.NoteResp{
+		NoteID: "note-1", Title: "Note 1", Body: "Body 1",
+	}
+
+	tests := []struct {
+		description string
+		noteID      string
+		mockNote    models.NoteResp
+		mockMyerror helper.MyHTTPErrors
+	}{
+		{
+			description: "successful get note by ID",
+			noteID:      "note-1",
+			mockNote:    mockNotes,
+			mockMyerror: helper.MyHTTPErrors{
+				Err:      nil,
+				HttpCode: fiber.StatusOK,
+			},
+		},
+		{
+			description: "failed get  note by ID",
+			noteID:      "note-1",
+			mockNote:    models.NoteResp{},
+			mockMyerror: helper.MyHTTPErrors{
+				Err:      fmt.Errorf("database error"),
+				HttpCode: fiber.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			nMock.On("GetNote", test.noteID).Return(test.mockNote, test.mockMyerror).Once()
+			reqPath := fmt.Sprintf("/notes/get/%s", test.noteID)
+			req := httptest.NewRequest("GET", reqPath, nil)
+			resp, err := service.app.Test(req)
+			assert.NoError(t, err)
+			assert.Equal(t, test.mockMyerror.HttpCode, resp.StatusCode)
+
+			if test.mockMyerror.HttpCode == fiber.StatusOK {
+				var note models.NoteResp
+				body, _ := io.ReadAll(resp.Body)
+				err = json.Unmarshal(body, &note)
+				assert.NoError(t, err)
+				assert.Equal(t, test.mockNote.NoteID, note.NoteID)
+			}
+		})
+	}
+}
+
 func TestGetNotes(t *testing.T) {
 	service, _, nMock := setupTestServer(t)
 
