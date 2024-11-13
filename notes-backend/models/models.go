@@ -33,3 +33,6 @@ type UserSignin struct {
 	Username string `json:"user" xml:"user" form:"user"`
 	Password string `json:"pass" xml:"pass" form:"pass"`
 }
+type JwtResp struct {
+	Authtoken string `json:"auth_token"`
+}

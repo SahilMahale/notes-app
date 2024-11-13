@@ -151,10 +151,15 @@ func (B *notesService) LoginUser(c *fiber.Ctx) error {
 	if errp != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString(errp.Error())
 	}
-
-	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"auth_token": atoken})
+	resp := models.JwtResp{
+		Authtoken: atoken,
+	}
+	return c.Status(fiber.StatusAccepted).JSON(resp)
 }
 
+// Stubbed version of StartNotesService is tested
+//
+//nolint:coverage
 func (B *notesService) StartNotesService() {
 	B.initMiddleware()
 	// Unauthenticated routes

@@ -6,11 +6,9 @@ import (
 	"encoding/pem"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	jwtware "github.com/gofiber/contrib/jwt"
-	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -19,9 +17,9 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func getAuthToken(c *fiber.Ctx) string {
+/* func getAuthToken(c *fiber.Ctx) string {
 	return strings.Split(c.Get("Authorization"), "Bearer ")[1]
-}
+} */
 
 func (B *notesService) initMiddleware() {
 	// Adding logger to the app
@@ -147,15 +145,4 @@ func makeTokenWithClaims(username string) (token string, err error) {
 		return "", errp
 	}
 	return token, nil
-}
-
-func getClaimsForThisCall(token string) (claims *MyCustomClaims, err error) {
-	claims = &MyCustomClaims{}
-	_, err = jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
-		return publicKey, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return claims, nil
 }

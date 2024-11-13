@@ -15,6 +15,12 @@ jobs:
         uses: actions/setup-go@v2.1.3
         with:
           go-version: 1.23.x
+      - name: Make certs for JWTs
+        run: |
+          mkdir secrets
+          cd secrets
+          openssl genrsa -out private_key.pem 2048
+          openssl rsa -in private_key.pem -outform PEM -pubout -out public_key.pem.pub
       - name: Run unit Tests
         run: |
           go mod tidy
