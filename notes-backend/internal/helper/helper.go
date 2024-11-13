@@ -21,11 +21,6 @@ func ValidateUserInfo(username, email string) (isvalidUsername bool, isvalidEmai
 	return isvalidUsername, isvalidEmail
 }
 
-func ValidateBooking(bookedTickets, remainingTickets uint) (isvalidBooking bool) {
-	isvalidBooking = bookedTickets > 0 && bookedTickets <= remainingTickets
-	return isvalidBooking
-}
-
 func ErrorMatch(err error) MyHTTPErrors {
 	if errors.Is(err, gorm.ErrDuplicatedKey) {
 		return MyHTTPErrors{
