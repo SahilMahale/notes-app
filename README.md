@@ -19,14 +19,14 @@ obeying the sonar cloud Quality gates
 
 ### Backend
 
-#### Making RSA required for the JWTs
+#### Making RSA CERTs required for the JWTs
 ```bash
 mkdir secrets
 cd secrets
 openssl genrsa -out private_key.pem 2048
 openssl rsa -in private_key.pem -outform PEM -pubout -out public_key.pem.pub
 ```
-#### Export the secrets folder path
+#### Export the Absolute path to secrets
 ```bash
 export APP_AUTH=<abs_path>/secrets
 ```
