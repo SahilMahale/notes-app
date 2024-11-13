@@ -4,17 +4,62 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"fmt"
 	"os"
 	"strings"
 	"time"
 
+	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 func getAuthToken(c *fiber.Ctx) string {
 	return strings.Split(c.Get("Authorization"), "Bearer ")[1]
+}
+
+func (B *notesService) initMiddleware() {
+	// Adding logger to the app
+	B.app.Use(requestid.New())
+	B.app.Use(logger.New(logger.Config{
+		// For more options, see the Config section
+		Format: "${pid} ${locals:requestid} ${status} - ${method} ${path}\n",
+	}))
+	B.app.Use(recover.New(recover.Config{EnableStackTrace: true}))
+	B.app.Use(cors.New(cors.Config{
+		AllowOrigins: "http://localhost:3000,http://localhost:4000,http://localhost:8080",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+	}))
+}
+
+func (B *notesService) initAuth() {
+	secretsFolderPath := os.Getenv("APP_AUTH")
+	if secretsFolderPath == "no-auth" || secretsFolderPath == "" {
+		// run app without jwt auth
+		return
+	}
+	privateKeyPath := fmt.Sprintf("%s/private_key.pem", secretsFolderPath)
+	publicKeyPath := fmt.Sprintf("%s/public_key.pem.pub", secretsFolderPath)
+	err := readPrivateKeyFile(privateKeyPath)
+	if err != nil {
+		panic(err)
+	}
+	err = readPublicKeyFile(publicKeyPath)
+	if err != nil {
+		panic(err)
+	}
+	B.app.Use(jwtware.New(jwtware.Config{
+		SigningKey: jwtware.SigningKey{
+			JWTAlg: jwtware.RS256,
+			Key:    publicKey,
+		},
+		ContextKey: "acces-key-token",
+	}))
 }
 
 /*
@@ -24,7 +69,6 @@ func getAuthToken(c *fiber.Ctx) string {
 */
 func readPrivateKeyFile(path string) error {
 	file, err := os.Open(path)
-
 	if err != nil {
 		return err
 	}
@@ -53,7 +97,6 @@ func readPrivateKeyFile(path string) error {
 
 func readPublicKeyFile(path string) error {
 	file, err := os.Open(path)
-
 	if err != nil {
 		return err
 	}
