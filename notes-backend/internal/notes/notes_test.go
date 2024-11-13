@@ -137,3 +137,72 @@ func TestNotesController_GetAllNotes(t *testing.T) {
 		})
 	}
 }
+
+func TestNotesController_GetNote(t *testing.T) {
+	dbMock := mock.NewTestDB(t)
+	nCtrl := NewNoteController(dbMock)
+	noteID1, err := nCtrl.CreateNote("Test Note", "Test Body")
+	if err.Err != nil {
+		t.Error(err.Err)
+	}
+	tests := []struct {
+		want    models.NoteResp
+		wantErr helper.MyHTTPErrors
+		name    string
+		noteID  string
+	}{
+		{
+			name:   "GetNote: Positive",
+			noteID: noteID1,
+			want: models.NoteResp{
+				NoteID: noteID1,
+				Title:  "Test Note",
+				Body:   "Test Body",
+			},
+			wantErr: helper.MyHTTPErrors{
+				Err: nil,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, gotErr := nCtrl.GetNote(tt.noteID)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NotesController.GetNote() got = %v, want %v", got, tt.want)
+			}
+			if gotErr.Err != tt.wantErr.Err {
+				t.Errorf("NotesController.GetNote() got1 = %v, want %v", gotErr, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestNotesController_DeleteNote(t *testing.T) {
+	dbMock := mock.NewTestDB(t)
+	nCtrl := NewNoteController(dbMock)
+	noteID1, err := nCtrl.CreateNote("Test Note", "Test Body")
+	if err.Err != nil {
+		t.Error(err.Err)
+	}
+	tests := []struct {
+		wantErr helper.MyHTTPErrors
+		name    string
+		noteID  string
+	}{
+		{
+			name:   "DeleteNote: Positive",
+			noteID: noteID1,
+			wantErr: helper.MyHTTPErrors{
+				Err: nil,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotErr := nCtrl.DeleteNote(tt.noteID)
+			if gotErr.Err != tt.wantErr.Err {
+				t.Errorf("NotesController.DeleteNote() got1 = %v, want %v", gotErr, tt.wantErr)
+			}
+		})
+	}
+}

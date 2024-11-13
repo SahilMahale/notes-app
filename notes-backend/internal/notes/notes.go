@@ -78,6 +78,7 @@ func (n NotesController) DeleteNote(noteId string) helper.MyHTTPErrors {
 	}
 }
 
+// UpdateNote method to update individual fields of a note
 func (n NotesController) UpdateNote(noteID string, note models.NotePatchRequest) (models.NotePatchResp, helper.MyHTTPErrors) {
 	res := n.DbInterface.Db.Model(&db.Note{}).Where("note_id = ?", noteID).Updates(&note)
 	if res.Error != nil {
