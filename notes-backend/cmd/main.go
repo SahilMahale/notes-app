@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/SahilMahale/notes-backend/internal/db"
+	"github.com/SahilMahale/notes-backend/internal/notes"
+	"github.com/SahilMahale/notes-backend/internal/user"
 	"github.com/SahilMahale/notes-backend/server"
 )
 
@@ -21,6 +23,6 @@ func main() {
 		ipAddrNPort = "localhost:8001"
 	}
 	fmt.Println("Staring server....")
-	notesService := server.NewNotesService("Notes app", ipAddrNPort, db)
+	notesService := server.NewNotesService("Notes app", ipAddrNPort, user.NewUserController(db), notes.NewNoteController(db))
 	notesService.StartNotesService()
 }

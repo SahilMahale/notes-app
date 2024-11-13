@@ -32,7 +32,6 @@ func (b NotesController) CreateNote(title, body string) (string, helper.MyHTTPEr
 		Title:  title,
 		Body:   body,
 	}
-
 	if err := b.DbInterface.Db.Create(&note); err.Error != nil {
 		return "", helper.ErrorMatch(err.Error)
 	}
@@ -42,7 +41,6 @@ func (b NotesController) CreateNote(title, body string) (string, helper.MyHTTPEr
 }
 
 func (n NotesController) GetAllNotes() (models.NotesResp, helper.MyHTTPErrors) {
-
 	notesList := models.NotesResp{}
 	notes := []db.Note{}
 	res := n.DbInterface.Db.Find(&notes)
@@ -61,6 +59,7 @@ func (n NotesController) GetAllNotes() (models.NotesResp, helper.MyHTTPErrors) {
 		Err: nil,
 	}
 }
+
 func (n NotesController) DeleteNote(noteId string) helper.MyHTTPErrors {
 	note := db.Note{
 		NoteID: noteId,
@@ -79,6 +78,7 @@ func (n NotesController) DeleteNote(noteId string) helper.MyHTTPErrors {
 	}
 }
 
+// UpdateNote method to update individual fields of a note
 func (n NotesController) UpdateNote(noteID string, note models.NotePatchRequest) (models.NotePatchResp, helper.MyHTTPErrors) {
 	res := n.DbInterface.Db.Model(&db.Note{}).Where("note_id = ?", noteID).Updates(&note)
 	if res.Error != nil {
@@ -92,6 +92,7 @@ func (n NotesController) UpdateNote(noteID string, note models.NotePatchRequest)
 			Err: nil,
 		}
 }
+
 func (n NotesController) GetNote(noteID string) (models.NoteResp, helper.MyHTTPErrors) {
 	note := db.Note{
 		NoteID: noteID,
