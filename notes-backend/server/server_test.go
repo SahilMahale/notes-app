@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/SahilMahale/notes-backend/internal/helper"
@@ -15,13 +16,39 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func mockLogIn(uMock *mocks.UserOps, service *notesService, t *testing.T) string {
+	login := models.UserSignin{
+		Username: "dummy",
+		Password: "dummy",
+	}
+	uMock.On("LoginUser", login.Username, login.Password).
+		Return(true, helper.MyHTTPErrors{Err: nil}).Once()
+	jsonLogReq, _ := json.Marshal(login)
+
+	reqL := httptest.NewRequest("POST", "/user/signin", bytes.NewReader(jsonLogReq))
+	reqL.Header.Set("Content-Type", "application/json")
+	respL, errL := service.app.Test(reqL)
+	assert.NoError(t, errL)
+	if respL.StatusCode != fiber.StatusAccepted {
+		t.Errorf("Login faied for Test: %s", t.Name())
+	}
+	var jwtResp models.JwtResp
+	body, _ := io.ReadAll(respL.Body)
+	errJ := json.Unmarshal(body, &jwtResp)
+	assert.NoError(t, errJ)
+	return jwtResp.Authtoken
+}
+
 func setupTestServer(t *testing.T) (*notesService, *mocks.UserOps, *mocks.NotesOps) {
 	userCtrl := mocks.NewUserOps(t)
 	notesCtrl := mocks.NewNotesOps(t)
+	os.Setenv("APP_AUTH", "/Users/sahil.mahale/notes-app/notes-backend/secrets/")
 	service := NewNotesService("test-app", ":8001", userCtrl, notesCtrl)
+	service.initMiddleware()
 	userGroup := service.app.Group("/user")
 	userGroup.Post("/signup", service.CreateUser)
 	userGroup.Post("/signin", service.LoginUser)
+	service.initAuth()
 	notesGroup := service.app.Group("/notes")
 	notesGroup.Post("/create", service.CreateNote)
 	notesGroup.Patch("/update/:noteID", service.UpdateNote)
@@ -80,9 +107,66 @@ func Test_notesService_CreateUser(t *testing.T) {
 	}
 }
 
-func TestCreateNote(t *testing.T) {
-	service, _, nMock := setupTestServer(t)
+func Test_notesService_LoginUser(t *testing.T) {
+	service, uMock, _ := setupTestServer(t)
 
+	tests := []struct {
+		loginReq    models.UserSignin
+		mockMyerror helper.MyHTTPErrors
+		description string
+		mockIsLogIn bool
+	}{
+		{
+			description: "LoginUser: successful",
+			loginReq: models.UserSignin{
+				Username: "testUser",
+				Password: "testpass1234",
+			},
+			mockIsLogIn: true,
+			mockMyerror: helper.MyHTTPErrors{
+				Err:      nil,
+				HttpCode: fiber.StatusAccepted,
+			},
+		},
+		{
+			description: "LoginUser: failed",
+			loginReq: models.UserSignin{
+				Username: "testUser",
+				Password: "testpass234",
+			},
+			mockIsLogIn: false,
+			mockMyerror: helper.MyHTTPErrors{
+				Err:      fmt.Errorf("password wrong"),
+				HttpCode: fiber.StatusInternalServerError,
+			},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			uMock.On("LoginUser", test.loginReq.Username, test.loginReq.Password).
+				Return(test.mockIsLogIn, test.mockMyerror).Once()
+
+			jsonBody, _ := json.Marshal(test.loginReq)
+			req := httptest.NewRequest("POST", "/user/signin", bytes.NewReader(jsonBody))
+			req.Header.Set("Content-Type", "application/json")
+
+			resp, err := service.app.Test(req)
+			assert.NoError(t, err)
+			assert.Equal(t, test.mockMyerror.HttpCode, resp.StatusCode)
+			if test.mockMyerror.HttpCode == fiber.StatusAccepted {
+				var jwtResp models.JwtResp
+				body, _ := io.ReadAll(resp.Body)
+				err = json.Unmarshal(body, &jwtResp)
+				assert.NoError(t, err)
+				authToken := jwtResp.Authtoken
+				fmt.Println(authToken)
+			}
+		})
+	}
+}
+
+func TestCreateNote(t *testing.T) {
+	service, uMock, nMock := setupTestServer(t)
 	tests := []struct {
 		description   string
 		noteReq       models.NoteRequest
@@ -120,10 +204,12 @@ func TestCreateNote(t *testing.T) {
 		t.Run(test.description, func(t *testing.T) {
 			nMock.On("CreateNote", test.noteReq.Title, test.noteReq.Body).
 				Return(test.mockResponse, test.mockMyerrResp).Once()
-
+			authToken := mockLogIn(uMock, service, t)
 			jsonBody, _ := json.Marshal(test.noteReq)
 			req := httptest.NewRequest("POST", "/notes/create", bytes.NewReader(jsonBody))
 			req.Header.Set("Content-Type", "application/json")
+			bearer := fmt.Sprintf("Bearer %s", authToken)
+			req.Header.Set("Authorization", bearer)
 
 			resp, err := service.app.Test(req)
 			assert.NoError(t, err)
@@ -143,7 +229,7 @@ func TestCreateNote(t *testing.T) {
 }
 
 func TestGetNoteByID(t *testing.T) {
-	service, _, nMock := setupTestServer(t)
+	service, uMock, nMock := setupTestServer(t)
 
 	mockNotes := models.NoteResp{
 		NoteID: "note-1", Title: "Note 1", Body: "Body 1",
@@ -178,8 +264,11 @@ func TestGetNoteByID(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.description, func(t *testing.T) {
 			nMock.On("GetNote", test.noteID).Return(test.mockNote, test.mockMyerror).Once()
+			authToken := mockLogIn(uMock, service, t)
 			reqPath := fmt.Sprintf("/notes/get/%s", test.noteID)
 			req := httptest.NewRequest("GET", reqPath, nil)
+			bearer := fmt.Sprintf("Bearer %s", authToken)
+			req.Header.Set("Authorization", bearer)
 			resp, err := service.app.Test(req)
 			assert.NoError(t, err)
 			assert.Equal(t, test.mockMyerror.HttpCode, resp.StatusCode)
@@ -196,7 +285,7 @@ func TestGetNoteByID(t *testing.T) {
 }
 
 func TestGetNotes(t *testing.T) {
-	service, _, nMock := setupTestServer(t)
+	service, uMock, nMock := setupTestServer(t)
 
 	mockNotes := models.NotesResp{
 		{NoteID: "note-1", Title: "Note 1", Body: "Body 1"},
@@ -229,8 +318,11 @@ func TestGetNotes(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.description, func(t *testing.T) {
 			nMock.On("GetAllNotes").Return(test.mockNotes, test.mockMyerror).Once()
+			authToken := mockLogIn(uMock, service, t)
 
 			req := httptest.NewRequest("GET", "/notes/get", nil)
+			bearer := fmt.Sprintf("Bearer %s", authToken)
+			req.Header.Set("Authorization", bearer)
 			resp, err := service.app.Test(req)
 			assert.NoError(t, err)
 			assert.Equal(t, test.mockMyerror.HttpCode, resp.StatusCode)
@@ -248,7 +340,7 @@ func TestGetNotes(t *testing.T) {
 }
 
 func TestDeleteNote(t *testing.T) {
-	service, _, nMock := setupTestServer(t)
+	service, uMock, nMock := setupTestServer(t)
 
 	tests := []struct {
 		description string
@@ -277,7 +369,10 @@ func TestDeleteNote(t *testing.T) {
 		t.Run(test.description, func(t *testing.T) {
 			nMock.On("DeleteNote", test.noteID).Return(test.mockMyerror).Once()
 
+			authToken := mockLogIn(uMock, service, t)
 			req := httptest.NewRequest("DELETE", "/notes/delete/"+test.noteID, nil)
+			bearer := fmt.Sprintf("Bearer %s", authToken)
+			req.Header.Set("Authorization", bearer)
 			resp, err := service.app.Test(req)
 			assert.NoError(t, err)
 			assert.Equal(t, test.mockMyerror.HttpCode, resp.StatusCode)
@@ -286,7 +381,7 @@ func TestDeleteNote(t *testing.T) {
 }
 
 func TestUpdateNote(t *testing.T) {
-	service, _, nMock := setupTestServer(t)
+	service, uMock, nMock := setupTestServer(t)
 
 	tests := []struct {
 		description  string
@@ -331,10 +426,13 @@ func TestUpdateNote(t *testing.T) {
 		t.Run(test.description, func(t *testing.T) {
 			nMock.On("UpdateNote", test.noteID, test.updateReq).
 				Return(test.mockResponse, test.mockMyerror).Once()
+			authToken := mockLogIn(uMock, service, t)
 
 			jsonBody, _ := json.Marshal(test.updateReq)
 			req := httptest.NewRequest("PATCH", "/notes/update/"+test.noteID, bytes.NewReader(jsonBody))
 			req.Header.Set("Content-Type", "application/json")
+			bearer := fmt.Sprintf("Bearer %s", authToken)
+			req.Header.Set("Authorization", bearer)
 
 			resp, err := service.app.Test(req)
 			assert.NoError(t, err)
@@ -350,36 +448,3 @@ func TestUpdateNote(t *testing.T) {
 		})
 	}
 }
-
-/* func Test_notesService_LoginUser(t *testing.T) {
-	type fields struct {
-		app       *fiber.App
-		notesCtrl notes.NotesOps
-		userCtrl  user.UserOps
-		ip        string
-	}
-	type args struct {
-		c *fiber.Ctx
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			B := &notesService{
-				app:       tt.fields.app,
-				notesCtrl: tt.fields.notesCtrl,
-				userCtrl:  tt.fields.userCtrl,
-				ip:        tt.fields.ip,
-			}
-			if err := B.LoginUser(tt.args.c); (err != nil) != tt.wantErr {
-				t.Errorf("notesService.LoginUser() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-} */
