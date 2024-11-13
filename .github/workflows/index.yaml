@@ -18,7 +18,7 @@ jobs:
       - name: Run unit Tests
         run: |
           go mod tidy
-          go test -coverprofile=./coverageout ./...
+          go test -coverprofile=./coverage.out ./...
         # run: |
         # cd notes-backend
         # go get github.com/securego/gosec/cmd/gosec
