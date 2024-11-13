@@ -15,8 +15,6 @@ type UserDataController struct {
 
 type UserOps interface {
 	CreateUser(username, email, pass string) helper.MyHTTPErrors
-	DeleteUser(username, pass string) helper.MyHTTPErrors
-	GetAllUsers() ([]string, helper.MyHTTPErrors)
 	LoginUser(username, pass string) (bool, helper.MyHTTPErrors)
 }
 
@@ -47,7 +45,6 @@ func (u UserDataController) CreateUser(username, email, pass string) helper.MyHT
 }
 
 func (u UserDataController) LoginUser(username, pass string) (bool, helper.MyHTTPErrors) {
-
 	user := db.User{Username: username}
 	res := u.DbInterface.Db.First(&user)
 	if res.Error != nil {
@@ -60,28 +57,6 @@ func (u UserDataController) LoginUser(username, pass string) (bool, helper.MyHTT
 		return false, myerr
 	}
 	return true, helper.MyHTTPErrors{
-		Err: nil,
-	}
-}
-
-func (u UserDataController) DeleteUser(username, pass string) helper.MyHTTPErrors {
-	return helper.MyHTTPErrors{
-		Err: nil,
-	}
-}
-
-func (u UserDataController) GetAllUsers() ([]string, helper.MyHTTPErrors) {
-	var userList = []string{}
-	users := []db.User{}
-	res := u.DbInterface.Db.Find(&users)
-	if res.Error != nil {
-		myerr := helper.ErrorMatch(res.Error)
-		return nil, myerr
-	}
-	for _, user := range users {
-		userList = append(userList, string(user.Username))
-	}
-	return userList, helper.MyHTTPErrors{
 		Err: nil,
 	}
 }
