@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/SahilMahale/notes-backend/internal/helper"
@@ -42,7 +43,11 @@ func mockLogIn(uMock *mocks.UserOps, service *notesService, t *testing.T) string
 func setupTestServer(t *testing.T) (*notesService, *mocks.UserOps, *mocks.NotesOps) {
 	userCtrl := mocks.NewUserOps(t)
 	notesCtrl := mocks.NewNotesOps(t)
-	os.Setenv("APP_AUTH", "/Users/sahil.mahale/notes-app/notes-backend/secrets/")
+	secPath, err := filepath.Abs("../secrets/")
+	if err != nil {
+		assert.NoError(t, err)
+	}
+	os.Setenv("APP_AUTH", secPath)
 	service := NewNotesService("test-app", ":8001", userCtrl, notesCtrl)
 	service.initMiddleware()
 	userGroup := service.app.Group("/user")
