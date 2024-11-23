@@ -3,19 +3,19 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiService {
   private apiUrl = 'http://localhost:8001';
-  private token = ''
+  private token = '';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getNotes(): Observable<any> {
     const headers = new HttpHeaders({
       'content-type': 'application/json',
-      'Authorization': 'Bearer ' + this.token
-    })
+      Authorization: 'Bearer ' + this.token,
+    });
 
     return this.http.get<any>(this.apiUrl + '/notes/get', {
       headers,
