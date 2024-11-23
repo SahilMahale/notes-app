@@ -30,7 +30,7 @@ func (B *notesService) initMiddleware() {
 	}))
 	B.app.Use(recover.New(recover.Config{EnableStackTrace: true}))
 	B.app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:3000,http://localhost:4000,http://localhost:8080",
+		AllowOrigins: "http://localhost:3000,http://localhost:4200,http://localhost:8080",
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 	}))
 }

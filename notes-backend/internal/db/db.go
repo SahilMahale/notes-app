@@ -16,7 +16,7 @@ func NewDbConnection() (DbConnection, error) {
 	if err != nil {
 		return DbConnection{}, fmt.Errorf("Error establishing DB connection: %V", err)
 	}
-	db.AutoMigrate(Note{})
-	db.AutoMigrate(User{})
+	db.AutoMigrate(&Note{})
+	db.AutoMigrate(&User{})
 	return DbConnection{Db: db}, nil
 }
