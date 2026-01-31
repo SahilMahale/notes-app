@@ -14,8 +14,7 @@ while obeying the sonar cloud Quality gates
     * npm [23.1.0 or higher](https://nodejs.org/en)
     * Typescript v5 or higher
     * npm [package manager](https://www.npmjs.com/)
-    * vite [bundler/dev server](https://vitejs.dev/guide/why.html)
-    * react
+    * Angular
 
 ### Backend
 
