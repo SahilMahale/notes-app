@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_fpgq5EUhdF
+createdAt: 2026-02-01T10:47:30.302110719
+updatedAt: 2026-02-01T10:47:30.302110959
+workspaceId: wk_VzRJkdx23N
+folderId: fl_534FewyAib
+authentication: {}
+authenticationType: none
+body: {}
+bodyType: null
+description: '[object Object]'
+headers: []
+method: GET
+name: Get-all-notes
+sortPriority: 4.0
+url: ${[baseUrl]}/notes/get
+urlParameters: []

@@ -1,0 +1,27 @@
+type: http_request
+model: http_request
+id: rq_GdrqLKKeqq
+createdAt: 2026-02-01T10:47:30.302555985
+updatedAt: 2026-02-01T10:47:30.302556205
+workspaceId: wk_VzRJkdx23N
+folderId: fl_qZwYxfsFAT
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "user": "<string>",
+      "pass": "<string>"
+    }
+bodyType: application/json
+description: '[object Object]'
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: null
+method: POST
+name: Signin
+sortPriority: 8.0
+url: ${[baseUrl]}/user/signin
+urlParameters: []

@@ -1,0 +1,22 @@
+type: http_request
+model: http_request
+id: rq_7A7QJWYegQ
+createdAt: 2026-02-01T10:47:30.301946541
+updatedAt: 2026-02-01T10:47:30.301946761
+workspaceId: wk_VzRJkdx23N
+folderId: fl_8fs9TMyTKr
+authentication: {}
+authenticationType: none
+body: {}
+bodyType: null
+description: '[object Object]'
+headers: []
+method: DELETE
+name: Delete-Note
+sortPriority: 2.0
+url: ${[baseUrl]}/notes/delete/:noteID
+urlParameters:
+- enabled: true
+  name: noteID
+  value: ''
+  id: null

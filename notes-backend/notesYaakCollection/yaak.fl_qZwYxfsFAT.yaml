@@ -1,0 +1,13 @@
+type: folder
+model: folder
+id: fl_qZwYxfsFAT
+createdAt: 2026-02-01T10:47:30.303088795
+updatedAt: 2026-02-01T10:47:30.303088955
+workspaceId: wk_VzRJkdx23N
+folderId: null
+authentication: {}
+authenticationType: null
+description: ''
+headers: []
+name: user
+sortPriority: 7.0
