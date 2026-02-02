@@ -7,7 +7,8 @@ import { Observable } from 'rxjs';
 })
 export class ApiService {
   private apiUrl = 'http://localhost:8001';
-  private token = '';
+  private token =
+    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic2FoaWwiLCJleHAiOjE3MzI1NjU2NDQsImlhdCI6MTczMjM5Mjg0NH0.hLEsU0YQRL3i1xKasncb0A15tqEbKiqnGKKxl1bX5JMTvYZAm0BzUPOpnLxEf383ilg3UXpvOgRkeioRcgvP2hsH2kzx0KfZF07xw3aLvjf1XiXFSKHnGxOa-P20aj6ULKeqPdpIf9U5n1hFXAO---Xfx2ynLUjqq46SUteioweXihoWTPhl3YlloIxrtpbfuBNgHevT1pDOeZfO2IJp19f1fmgZTDlPw7-IUoGk-xC2cZMGdAF35bT7X_kfbn8JwkfjLS2MaiUya34IZYHhVDH5gEj0RSw-7BWG_sTPK6oNhfp5-cUeICA394JqLJevKFaZz18zugCSBMTw6h3MXQ';
 
   constructor(private http: HttpClient) {}
 

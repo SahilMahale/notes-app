@@ -1,0 +1,172 @@
+=== RUN   Test_notesService_CreateUser
+=== RUN   Test_notesService_CreateUser/successful_user_creation
+60951 0156d8bd-864f-4c7f-8749-ffe3958cefae 201 - POST /user/signup
+=== RUN   Test_notesService_CreateUser/failed_user_creation
+60951 0256d8bd-864f-4c7f-8749-ffe3958cefae 400 - POST /user/signup
+--- PASS: Test_notesService_CreateUser (0.00s)
+    --- PASS: Test_notesService_CreateUser/successful_user_creation (0.00s)
+    --- PASS: Test_notesService_CreateUser/failed_user_creation (0.00s)
+=== RUN   TestCreateNote
+=== RUN   TestCreateNote/successful_note_creation
+60951 0356d8bd-864f-4c7f-8749-ffe3958cefae 400 - POST /notes/create
+    server_test.go:134: 
+        	Error Trace:	/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:134
+        	Error:      	Not equal: 
+        	            	expected: 202
+        	            	actual  : 400
+        	Test:       	TestCreateNote/successful_note_creation
+    server_test.go:140: 
+        	Error Trace:	/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:140
+        	Error:      	Received unexpected error:
+        	            	invalid character 'm' looking for beginning of value
+        	Test:       	TestCreateNote/successful_note_creation
+    server_test.go:141: 
+        	Error Trace:	/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:141
+        	Error:      	Not equal: 
+        	            	expected: "Test Note"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-Test Note
+        	            	+
+        	Test:       	TestCreateNote/successful_note_creation
+    server_test.go:142: 
+        	Error Trace:	/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:142
+        	Error:      	Not equal: 
+        	            	expected: "Test Body"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-Test Body
+        	            	+
+        	Test:       	TestCreateNote/successful_note_creation
+    server_test.go:143: 
+        	Error Trace:	/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:143
+        	Error:      	Not equal: 
+        	            	expected: "note-123"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-note-123
+        	            	+
+        	Test:       	TestCreateNote/successful_note_creation
+=== RUN   TestCreateNote/failed_note_creation
+60951 0456d8bd-864f-4c7f-8749-ffe3958cefae 400 - POST /notes/create
+    server_test.go:134: 
+        	Error Trace:	/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:134
+        	Error:      	Not equal: 
+        	            	expected: 500
+        	            	actual  : 400
+        	Test:       	TestCreateNote/failed_note_creation
+=== NAME  TestCreateNote
+    NotesOps.go:158: FAIL:	CreateNote(string,string)
+        		at: [/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:125]
+    NotesOps.go:158: FAIL:	CreateNote(string,string)
+        		at: [/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:125]
+    NotesOps.go:158: FAIL: 0 out of 2 expectation(s) were met.
+        	The code you are testing needs to make 2 more call(s).
+        	at: [/Users/sahil.mahale/notes-app/notes-backend/internal/mocks/NotesOps.go:158 /opt/homebrew/Cellar/go/1.23.3/libexec/src/testing/testing.go:1176 /opt/homebrew/Cellar/go/1.23.3/libexec/src/testing/testing.go:1354 /opt/homebrew/Cellar/go/1.23.3/libexec/src/testing/testing.go:1684]
+--- FAIL: TestCreateNote (0.00s)
+    --- FAIL: TestCreateNote/successful_note_creation (0.00s)
+    --- FAIL: TestCreateNote/failed_note_creation (0.00s)
+=== RUN   TestGetNoteByID
+=== RUN   TestGetNoteByID/successful_get_note_by_ID
+60951 0556d8bd-864f-4c7f-8749-ffe3958cefae 400 - GET /notes/get/note-1
+    server_test.go:189: 
+        	Error Trace:	/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:189
+        	Error:      	Not equal: 
+        	            	expected: 200
+        	            	actual  : 400
+        	Test:       	TestGetNoteByID/successful_get_note_by_ID
+    server_test.go:195: 
+        	Error Trace:	/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:195
+        	Error:      	Received unexpected error:
+        	            	invalid character 'm' looking for beginning of value
+        	Test:       	TestGetNoteByID/successful_get_note_by_ID
+    server_test.go:196: 
+        	Error Trace:	/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:196
+        	Error:      	Not equal: 
+        	            	expected: "note-1"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-note-1
+        	            	+
+        	Test:       	TestGetNoteByID/successful_get_note_by_ID
+=== RUN   TestGetNoteByID/failed_get__note_by_ID
+60951 0656d8bd-864f-4c7f-8749-ffe3958cefae 400 - GET /notes/get/note-1
+    server_test.go:189: 
+        	Error Trace:	/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:189
+        	Error:      	Not equal: 
+        	            	expected: 500
+        	            	actual  : 400
+        	Test:       	TestGetNoteByID/failed_get__note_by_ID
+=== NAME  TestGetNoteByID
+    NotesOps.go:158: FAIL:	GetNote(string)
+        		at: [/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:184]
+    NotesOps.go:158: FAIL:	GetNote(string)
+        		at: [/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:184]
+    NotesOps.go:158: FAIL: 0 out of 2 expectation(s) were met.
+        	The code you are testing needs to make 2 more call(s).
+        	at: [/Users/sahil.mahale/notes-app/notes-backend/internal/mocks/NotesOps.go:158 /opt/homebrew/Cellar/go/1.23.3/libexec/src/testing/testing.go:1176 /opt/homebrew/Cellar/go/1.23.3/libexec/src/testing/testing.go:1354 /opt/homebrew/Cellar/go/1.23.3/libexec/src/testing/testing.go:1684]
+--- FAIL: TestGetNoteByID (0.00s)
+    --- FAIL: TestGetNoteByID/successful_get_note_by_ID (0.00s)
+    --- FAIL: TestGetNoteByID/failed_get__note_by_ID (0.00s)
+=== RUN   TestGetNotes
+=== RUN   TestGetNotes/successful_get_all_notes
+60951 0756d8bd-864f-4c7f-8749-ffe3958cefae 400 - GET /notes/get
+    server_test.go:240: 
+        	Error Trace:	/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:240
+        	Error:      	Not equal: 
+        	            	expected: 200
+        	            	actual  : 400
+        	Test:       	TestGetNotes/successful_get_all_notes
+    server_test.go:246: 
+        	Error Trace:	/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:246
+        	Error:      	Received unexpected error:
+        	            	invalid character 'm' looking for beginning of value
+        	Test:       	TestGetNotes/successful_get_all_notes
+    server_test.go:247: 
+        	Error Trace:	/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:247
+        	Error:      	Not equal: 
+        	            	expected: 2
+        	            	actual  : 0
+        	Test:       	TestGetNotes/successful_get_all_notes
+=== NAME  TestGetNotes
+    NotesOps.go:158: FAIL:	GetAllNotes()
+        		at: [/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:235]
+    NotesOps.go:158: FAIL: 0 out of 1 expectation(s) were met.
+        	The code you are testing needs to make 1 more call(s).
+        	at: [/Users/sahil.mahale/notes-app/notes-backend/internal/mocks/NotesOps.go:158 /opt/homebrew/Cellar/go/1.23.3/libexec/src/testing/testing.go:1176 /opt/homebrew/Cellar/go/1.23.3/libexec/src/testing/testing.go:1354 /opt/homebrew/Cellar/go/1.23.3/libexec/src/testing/testing.go:1627 /opt/homebrew/Cellar/go/1.23.3/libexec/src/testing/testing.go:1635 /opt/homebrew/Cellar/go/1.23.3/libexec/src/runtime/panic.go:785 /opt/homebrew/Cellar/go/1.23.3/libexec/src/runtime/panic.go:115 /Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:248]
+--- FAIL: TestGetNotes (0.00s)
+    --- FAIL: TestGetNotes/successful_get_all_notes (0.00s)
+panic: runtime error: index out of range [0] with length 0 [recovered]
+	panic: runtime error: index out of range [0] with length 0
+
+goroutine 53 [running]:
+testing.tRunner.func1.2({0x102a777a0, 0x140001a7320})
+	/opt/homebrew/Cellar/go/1.23.3/libexec/src/testing/testing.go:1632 +0x1bc
+testing.tRunner.func1()
+	/opt/homebrew/Cellar/go/1.23.3/libexec/src/testing/testing.go:1635 +0x334
+panic({0x102a777a0?, 0x140001a7320?})
+	/opt/homebrew/Cellar/go/1.23.3/libexec/src/runtime/panic.go:785 +0x124
+github.com/SahilMahale/notes-backend/server.TestGetNotes.func1(0x1400034e820)
+	/Users/sahil.mahale/notes-app/notes-backend/server/server_test.go:248 +0x34c
+testing.tRunner(0x1400034e820, 0x140001adb00)
+	/opt/homebrew/Cellar/go/1.23.3/libexec/src/testing/testing.go:1690 +0xe4
+created by testing.(*T).Run in goroutine 52
+	/opt/homebrew/Cellar/go/1.23.3/libexec/src/testing/testing.go:1743 +0x314
+FAIL	github.com/SahilMahale/notes-backend/server	0.293s
+FAIL

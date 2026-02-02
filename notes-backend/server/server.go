@@ -34,7 +34,7 @@ type notesServicer interface {
 	DeleteNote(c *fiber.Ctx) error
 	CreateNote(c *fiber.Ctx) error
 	UpdateNote(c *fiber.Ctx) error
-	StartNotesService(c *fiber.Ctx) error
+	StartNotesService() error
 }
 
 func NewNotesService(appname, ip string, userCtrl user.UserOps, notesCtrl notes.NotesOps) notesService {

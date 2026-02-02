@@ -25,7 +25,7 @@ func NewNoteController(db db.DbConnection) NotesController {
 	}
 }
 
-func (b NotesController) CreateNote(title, body string) (string, helper.MyHTTPErrors) {
+func (b *NotesController) CreateNote(title, body string) (string, helper.MyHTTPErrors) {
 	noteId := uuid.NewString()
 	note := db.Note{
 		NoteID: noteId,
