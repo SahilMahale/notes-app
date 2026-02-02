@@ -11,10 +11,9 @@ while obeying the sonar cloud Quality gates
     * sqlite3 [DB](https://www.sqlite.org/index.html) 
     * gorm [db ORM](https://gorm.io/)  
 * Frontend  
-    * npm [23.1.0 or higher](https://nodejs.org/en)
     * Typescript v5 or higher
-    * npm [package manager](https://www.npmjs.com/)
-    * Angular
+    * Bun
+    * React with TSR
 
 ### Backend
 
