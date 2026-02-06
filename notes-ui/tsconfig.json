@@ -30,12 +30,6 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
-    "compilerOptions": {
-         "baseUrl": ".",
-        "paths": {
-        "@/*": ["./src/*"]
-    }
-    }
   },
 
   "exclude": ["dist", "node_modules"]
