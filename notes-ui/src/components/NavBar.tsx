@@ -8,8 +8,8 @@ const AnchorLinks = ({ to, children, isTitle, ...props }: { to: string, children
     <Link
       to={to}
       className={`font-sans py-2.5 rounded-lg ${isTitle ? 'tracking-tighter text-4xl px-3' : 'text-base px-5'
-        }  text-slate-200 text-center font-bold hover:ring-sky-300 hover:ring-2`}
-      activeProps={{ className: 'bg-slate-800' }}
+        }  text-zinc-200 text-center font-bold hover:ring-sky-300 hover:ring-2`}
+      activeProps={{ className: 'bg-zinc-800' }}
       {...props}
     >
       {children}
@@ -52,10 +52,10 @@ const Navbar = ({ children }: { children?: ReactNode }) => {
     isAdmin = appContext.claims.type === 'admin'
   }
   return (
-    <div className=" bg-slate-900 mx-auto py-2">
-      <nav className=" bg-slate-950 rounded-lg text-gray-200 container mx-auto flex flex-wrap items-center justify-between">
+    <div className=" bg-zinc-950 mx-auto py-2 border-2 border-zinc-500">
+      <nav className=" bg-zinc-950 rounded-lg text-gray-200 container mx-auto flex flex-wrap items-center justify-between">
         <AnchorLinks to={homeLink} isTitle={true}>
-          Booking APP
+          Notes App
         </AnchorLinks>
         <div className="px-4">
           {appContext.isLoggedIn ? (
