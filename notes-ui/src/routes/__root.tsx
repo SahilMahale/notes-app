@@ -1,7 +1,11 @@
-import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
+import type { AppContext } from '@/context/authContext'
+import {  createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
-export const Route = createRootRoute({
+interface RouterAppContext {
+    auth: AppContext
+}
+export const Route = createRootRouteWithContext<RouterAppContext>()({
   component: () => (
     <div className="min-h-screen bg-zinc-950">
       <nav className="border-b border-zinc-800 bg-zinc-900 p-4">
