@@ -6,7 +6,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { userSignup } from '../../API/api';
+import { userSignup } from '@/api/api';
 import Loading from '../../components/Loading'
 
 const signupFormSchema = z.object({
@@ -18,7 +18,7 @@ export const SignupForm = ({ isAdmin = false }) => {
   const navigateTO = useNavigate();
   const { mutate, isPending, isPaused, isError, error } = useMutation({
     mutationFn: ({ user, email, pass }: { user: string, email: string, pass: string }) => {
-      return userSignup(user, email, pass, isAdmin);
+      return userSignup(user, email, pass);
     },
     onSuccess: () => {
       navigateTO({ to: '/Login' });

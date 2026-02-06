@@ -61,16 +61,15 @@ const putBookings = async (user: string, tickets: number, authKey: string) => {
 
   return data;
 };
-const userSignup = async (user: string, email: string, pass: string, isadmin: boolean) => {
+const userSignup = async (user: string, email: string, pass: string) => {
   let data;
   await axios
     .post(
-      `/api/user/signup`,
+      `/user/signup`,
       {
         user: user,
         email: email,
         pass: pass,
-        isadmin: isadmin,
       },
       {
         headers: {
@@ -91,7 +90,7 @@ const userLogin = async (user: string, pass: string): Promise<authObj> => {
   //let data;
   const resp = await axios
     .post(
-      `/api/user/signin`,
+      `/user/signin`,
       {
         user: user,
         pass: pass,
