@@ -59,7 +59,7 @@ export const LoginForm = ({ isAdmin = false }) => {
         </div>
       )}
       {!(isPending || isPaused) && (
-        <div className="container mx-auto px-20 py-2 flex flex-wrap items-center justify-between ">
+        <div className="container mx-auto  px-20 py-2 flex flex-wrap items-center justify-between ">
           <Form
             {...loginForm}
           >
@@ -71,21 +71,21 @@ export const LoginForm = ({ isAdmin = false }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel
-                        className="block mb-2 text-lg font-medium text-zinc-200"
+                        className="block mb-2 text-lg font-medium text-zinc-200 data-[error=true]:text-rose-800"
                       >
                         User Name
                       </FormLabel>
                       <FormControl>
                         <Input
                           placeholder='debby downer'
-                          className="border w-[300px] text-gray-100 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 border-gray-600 placeholder-gray-400 "
+                          className="border w-[300px] text-gray-100 selection:bg-gray-600 text-lg rounded-lg block p-2.5 border-gray-600 placeholder-gray-400 "
                           {...field}
                         />
                       </FormControl>
                       <FormDescription className='text-zinc-400'>
                         Enter the username used while sighing up
                       </FormDescription>
-                      <FormMessage />
+                      <FormMessage className='text-rose-800'/>
                     </FormItem>
 
                   )}
@@ -98,7 +98,7 @@ export const LoginForm = ({ isAdmin = false }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel
-                        className="block mb-2 text-lg font-medium text-zinc-200"
+                            className="block mb-2 text-lg font-medium text-zinc-200 data-[error=true]:text-rose-800"
                       >
                         Password
                       </FormLabel>
@@ -106,20 +106,20 @@ export const LoginForm = ({ isAdmin = false }) => {
                         <Input
                           type='password'
                           {...field}
-                          className="w-[300px] border  text-gray-100 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 border-gray-600 :placeholder-gray-400 "
+                          className="w-[300px] border  text-gray-100 selection:bg-gray-600 text-lg rounded-lg block p-2.5 border-gray-600 :placeholder-gray-400 "
                         />
                       </FormControl>
                       <FormDescription className='text-zinc-400'>
                         Enter the password set at sign up
                       </FormDescription>
-                      <FormMessage />
+                      <FormMessage className='text-rose-800'/>
                     </FormItem>
                   )}
                 />
               </div>
               <Button
                 type="submit"
-                className="bg-transparent hover:bg-zinc-500 text-zinc-300 font-semibold hover:text-white py-2 px-4 border border-zinc-700 hover:border-transparent rounded"
+                className="bg-transparent hover:bg-zinc-500 text-zinc-300 font-semibold hover:text-white py-2 px-4 border border-zinc-700 hover:outline-2 hover:outline-zinc-500 hover:border-transparent rounded"
               >
                 Log in
               </Button>

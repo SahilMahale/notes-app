@@ -12,7 +12,11 @@ import Loading from '../../components/Loading'
 const signupFormSchema = z.object({
   user: z.string().min(4, { message: "UserName should be atleast 4 characters long" }).max(50),
   pass: z.string().min(8, { message: "password should be atleast 8 characters long" }),
+  confirmPass: z.string(),
   email: z.string().email({ message: "Please enter a valid email ID" })
+}).refine((data) => data.pass === data.confirmPass, {
+  message: "Passwords do not match",
+  path: ["confirmPass"],
 })
 export const SignupForm = ({ isAdmin = false }) => {
   const navigateTO = useNavigate();
@@ -28,6 +32,7 @@ export const SignupForm = ({ isAdmin = false }) => {
     defaultValues: {
       user: "Monkey-menace",
       pass: '',
+      confirmPass: '',
       email: 'monkey@saiyan.com',
     },
     resolver: zodResolver(signupFormSchema)
@@ -60,20 +65,20 @@ export const SignupForm = ({ isAdmin = false }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel
-                        className="block mb-2 text-lg font-medium text-zinc-300"
+                        className="block mb-2 text-lg font-medium text-zinc-300 data-[error=true]:text-rose-800"
                       >
                         User Name
                       </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
-                          className="border w-[300px] text-gray-100 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 border-gray-600 placeholder-gray-400"
+                          className="border w-[300px] text-gray-100 selection:bg-gray-600 text-lg rounded-lg focus:outline-2 focus:outline-blue-500 block p-2.5 border-gray-600 placeholder-gray-400"
                         />
                       </FormControl>
                       <FormDescription className='text-zinc-400'>
                         Enter the username which is atleast 4 characters long
                       </FormDescription>
-                      <FormMessage />
+                      <FormMessage className='text-rose-800'/>
                     </FormItem>
                   )}
                 />
@@ -85,20 +90,20 @@ export const SignupForm = ({ isAdmin = false }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel
-                        className="block mb-2 text-lg font-medium text-zinc-300"
+                        className="block mb-2 text-lg font-medium text-zinc-300 data-[error=true]:text-rose-800"
                       >
                         Email address
                       </FormLabel>
                       <FormControl>
-                        <input
+                        <Input
                           {...field}
-                          className="bw-[300px] border  text-gray-100 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 border-gray-600 placeholder-gray-400"
+                          className="bw-[300px] border  text-gray-100 selection:bg-gray-600 text-lg rounded-lg block p-2.5 border-gray-600 placeholder-gray-400"
                         />
                       </FormControl>
                       <FormDescription className='text-zinc-400'>
                         Enter a valid Email address
                       </FormDescription>
-                      <FormMessage />
+                      <FormMessage className='text-rose-800'/>
                     </FormItem>
                   )}
                 />
@@ -111,21 +116,45 @@ export const SignupForm = ({ isAdmin = false }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel
-                        className="block mb-2 text-lg font-medium text-zinc-200"
+                        className="block mb-2 text-lg font-medium text-zinc-200 data-[error=true]:text-rose-800"
                       >
                         Password
                       </FormLabel>
                       <FormControl>
-                        <input
+                        <Input
                           type='password'
                           {...field}
-                          className=" w-[300px] border text-gray-100 text-lg rounded-lg  block p-2.5 border-gray-600 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                          className=" w-[300px] border text-gray-100 selection:bg-gray-600 text-lg rounded-lg  block p-2.5 border-gray-600 placeholder-gray-400"
                         />
                       </FormControl>
                       <FormDescription className='text-zinc-400'>
                         Enter a passWord 8 characters long
                       </FormDescription>
-                      <FormMessage />
+                      <FormMessage className='text-rose-800'/>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="mb-6">
+                <FormField
+                  control={signupForm.control}
+                  name='confirmPass'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel
+                        className="block mb-2 text-lg font-medium text-zinc-200 data-[error=true]:text-rose-800"
+                      >
+                        Confirm Password
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type='password'
+                          {...field}
+                          className=" w-[300px] border text-gray-100 selection:bg-gray-600 text-lg rounded-lg  block p-2.5 border-gray-600 placeholder-gray-400"
+                        />
+                      </FormControl>
+                        <FormMessage className='text-rose-800'/>
                     </FormItem>
                   )}
                 />
@@ -133,7 +162,7 @@ export const SignupForm = ({ isAdmin = false }) => {
 
               <Button
                 type="submit"
-                className="bg-transparent hover:bg-zinc-500 text-zinc-300 font-semibold hover:text-white py-2 px-4 border border-zinc-700 hover:border-transparent rounded"
+                className="bg-transparent hover:bg-zinc-500 text-zinc-300 font-semibold hover:text-white py-2 px-4 border border-zinc-700 hover:outline-2 hover:outline-zinc-500 hover:border-transparent rounded"
               >
                 Sign Up
               </Button>
