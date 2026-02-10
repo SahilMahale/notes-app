@@ -9,7 +9,7 @@ function HomeComponent() {
   return (
     <div className="container mx-auto p-8 text-center relative z-10">
       <Card className="bg-zinc-900 text-zinc-300 cursor-pointer rounded-lg 
-    hover:ring-2 hover:ring-purple-700 hover:border-purple-600 transition-colors">
+    hover:ring-2 hover:ring-blue-500 hover:border-blue-600 transition-colors">
         <CardHeader className="gap-4">
           <CardTitle className="text-3xl font-bold">Bun + React</CardTitle>
           <CardDescription className="text-zinc-400">

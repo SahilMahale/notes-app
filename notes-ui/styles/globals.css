@@ -110,6 +110,78 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Regular */
+@font-face {
+  font-family: "TX-02";
+  src: url("../assets/fonts/TX-02-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-stretch: normal;
+}
+ 
+@font-face {
+  font-family: "TX-02";
+  src: url("../assets/fonts/TX-02-Oblique.otf") format("opentype");
+  font-weight: 400;
+  font-style: oblique;
+  font-stretch: normal;
+}
+ 
+/* Medium */
+@font-face {
+  font-family: "TX-02";
+  src: url("../assets/fonts/TX-02-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+}
+ 
+@font-face {
+  font-family: "TX-02";
+  src: url("../assets/fonts/TX-02-Medium-Oblique.otf") format("opentype");
+  font-weight: 500;
+  font-style: oblique;
+  font-stretch: normal;
+}
+ 
+/* Bold */
+@font-face {
+  font-family: "TX-02";
+  src: url("../assets/fonts/TX-02-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-stretch: normal;
+}
+ 
+@font-face {
+  font-family: "TX-02";
+  src: url("../assets/fonts/TX-02-Bold-Oblique.otf") format("opentype");
+  font-weight: 700;
+  font-style: oblique;
+  font-stretch: normal;
+}
+ 
+/* ExtraBold */
+@font-face {
+  font-family: "TX-02";
+  src: url("../assets/fonts/TX-02-ExtraBold.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-stretch: normal;
+}
+ 
+@font-face {
+  font-family: "TX-02";
+  src: url("../assets/fonts/TX-02-ExtraBold-Oblique.otf") format("opentype");
+  font-weight: 800;
+  font-style: oblique;
+  font-stretch: normal;
+}
+ 
+@theme {
+  --font-sans: "TX-02", sans-serif;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -1,4 +1,4 @@
-import { Bookings } from "@/API/api";
+import { type Bookings } from "@/api/api";
 
 const Table = ({ data, columns }: { data: Bookings[], columns: Array<string> }) => {
   return (

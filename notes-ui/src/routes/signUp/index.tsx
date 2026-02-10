@@ -36,8 +36,8 @@ function Signup({ isAdmin = false }) {
             >
               <span
                 className={`${isAdminToggled
-                  ? 'tranzinc-x-6  bg-amber-700'
-                  : 'tranzinc-x-1  bg-zinc-500'
+                  ? 'translate-x-6  bg-amber-700'
+                  : 'translate-x-1  bg-zinc-500'
                   } inline-block h-4 w-4 transform rounded-full  transition-transform`}
               />
             </Switch>

@@ -78,7 +78,7 @@ export const LoginForm = ({ isAdmin = false }) => {
                       <FormControl>
                         <Input
                           placeholder='debby downer'
-                          className="bg-gray-50 border w-[300px] text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 border-gray-600 placeholder-gray-400 "
+                          className="border w-[300px] text-gray-100 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 border-gray-600 placeholder-gray-400 "
                           {...field}
                         />
                       </FormControl>
@@ -106,7 +106,7 @@ export const LoginForm = ({ isAdmin = false }) => {
                         <Input
                           type='password'
                           {...field}
-                          className="bg-gray-50 w-[300px] border  text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 border-gray-600 :placeholder-gray-400 "
+                          className="w-[300px] border  text-gray-100 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 border-gray-600 :placeholder-gray-400 "
                         />
                       </FormControl>
                       <FormDescription className='text-zinc-400'>
