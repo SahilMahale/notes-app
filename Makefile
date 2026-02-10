@@ -7,8 +7,8 @@ dev:
 
 # Run backend only
 backend:
-	@echo "Starting backend on localhost:8001..."
-	cd notes-backend && APP_AUTH=./secrets go run ./cmd/main.go
+	@echo "Starting backend on localhost:8001 (air)..."
+	cd notes-backend && air
 
 # Run frontend only
 frontend:
@@ -18,8 +18,8 @@ frontend:
 # Stop all running services
 stop:
 	@echo "Stopping services..."
-	@-pkill -f "go run ./cmd/main.go" 2>/dev/null || true
-	@-pkill -f "bun.*src/index.ts" 2>/dev/null || true
+	@-pkill -f "air" 2>/dev/null || true
+	@-pkill -f "vite" 2>/dev/null || true
 	@echo "Services stopped"
 
 # Install dependencies

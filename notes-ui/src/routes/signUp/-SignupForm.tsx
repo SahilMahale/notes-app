@@ -25,7 +25,7 @@ export const SignupForm = ({ isAdmin = false }) => {
       return userSignup(user, email, pass);
     },
     onSuccess: () => {
-      navigateTO({ to: '/Login' });
+      navigateTO({ to: '/login' });
     },
   });
   const signupForm = useForm<z.infer<typeof signupFormSchema>>({
