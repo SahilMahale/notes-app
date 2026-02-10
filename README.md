@@ -1,4 +1,4 @@
-# Notes-app
+# Nōto
 A simple notes taking app made as a reference, showing how to structure a go codebase, build and test it  
 while obeying the sonar cloud Quality gates
 
