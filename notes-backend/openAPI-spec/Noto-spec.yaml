@@ -2,41 +2,24 @@ openapi: 3.0.0
 info:
   title: Noto-spec
   version: 1.0.0
+servers:
+  - url: https://localhost:3001
 paths:
   /notes/create:
     post:
       summary: Create
-      operationId: users_sahil_documents_bruno_noto_notes_create_yml
-      description: ''
+      operationId: notes_create
       tags:
         - notes
       responses:
         '200':
           description: ''
-      parameters:
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: '*/*'
-        - name: Content-Type
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: application/json
       requestBody:
         $ref: '#/components/requestBodies/create'
-      servers:
-        - url: https://localhost:3001
   /notes/delete/{noteID}:
     delete:
       summary: Delete
-      operationId: users_sahil_documents_bruno_noto_notes_delete_yml
-      description: ''
+      operationId: notes_delete
       tags:
         - notes
       responses:
@@ -44,51 +27,23 @@ paths:
           description: ''
       parameters:
         - name: noteID
-          in: query
-          description: ''
-          required: true
-          schema:
-            type: string
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: '*/*'
-        - name: noteID
           in: path
-          description: ''
           required: true
           schema:
             type: string
-      servers:
-        - url: https://localhost:3001
   /notes/get:
     get:
       summary: All_notes
-      operationId: users_sahil_documents_bruno_noto_notes_get_all_notes_yml
-      description: ''
+      operationId: notes_get_all
       tags:
         - notes
       responses:
         '200':
           description: ''
-      parameters:
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: '*/*'
-      servers:
-        - url: https://localhost:3001
   /notes/get/{noteID}:
     get:
       summary: by_ID
-      operationId: users_sahil_documents_bruno_noto_notes_get_by_id_yml
-      description: ''
+      operationId: notes_get_by_id
       tags:
         - notes
       responses:
@@ -96,31 +51,14 @@ paths:
           description: ''
       parameters:
         - name: noteID
-          in: query
-          description: ''
-          required: true
-          schema:
-            type: string
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: '*/*'
-        - name: noteID
           in: path
-          description: ''
           required: true
           schema:
             type: string
-      servers:
-        - url: https://localhost:3001
   /notes/update/{noteID}:
     patch:
       summary: update
-      operationId: users_sahil_documents_bruno_noto_notes_update_yml
-      description: ''
+      operationId: notes_update
       tags:
         - notes
       responses:
@@ -128,98 +66,41 @@ paths:
           description: ''
       parameters:
         - name: noteID
-          in: query
-          description: ''
-          required: true
-          schema:
-            type: string
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: '*/*'
-        - name: Content-Type
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: application/json
-        - name: noteID
           in: path
-          description: ''
           required: true
           schema:
             type: string
       requestBody:
         $ref: '#/components/requestBodies/update'
-      servers:
-        - url: https://localhost:3001
   /user/signin:
     post:
       summary: Login
-      operationId: users_sahil_documents_bruno_noto_user_login_yml
-      description: ''
+      operationId: user_login
       tags:
         - user
       responses:
         '200':
           description: ''
-      parameters:
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: '*/*'
-        - name: Content-Type
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: application/json
       requestBody:
         $ref: '#/components/requestBodies/login'
-      servers:
-        - url: https://localhost:3001
   /user/signup:
     post:
       summary: SignUP
-      operationId: users_sahil_documents_bruno_noto_user_signup_yml
-      description: ''
+      operationId: user_signup
       tags:
         - user
       responses:
         '200':
           description: ''
-      parameters:
-        - name: Accept
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: '*/*'
-        - name: Content-Type
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: application/json
       requestBody:
         $ref: '#/components/requestBodies/signup'
-      servers:
-        - url: https://localhost:3001
-servers: []
 components:
   schemas:
     create:
       type: object
+      required:
+        - title
+        - body
       properties:
         title:
           type: string
@@ -231,12 +112,17 @@ components:
     update:
       type: object
       properties:
+        title:
+          type: string
         body:
           type: string
       example:
         body: <string>
     login:
       type: object
+      required:
+        - user
+        - pass
       properties:
         user:
           type: string
@@ -247,6 +133,10 @@ components:
         pass: <string>
     signup:
       type: object
+      required:
+        - user
+        - email
+        - pass
       properties:
         user:
           type: string
@@ -264,27 +154,23 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/create'
-      description: ''
       required: true
     update:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/update'
-      description: ''
-      required: true
+      required: false
     login:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/login'
-      description: ''
       required: true
     signup:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/signup'
-      description: ''
       required: true
   securitySchemes: {}
