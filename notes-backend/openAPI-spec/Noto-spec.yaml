@@ -14,13 +14,6 @@ paths:
         '200':
           description: ''
       parameters:
-        - name: User-Agent
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: yaak
         - name: Accept
           in: header
           description: ''
@@ -56,13 +49,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: User-Agent
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: yaak
         - name: Accept
           in: header
           description: ''
@@ -89,13 +75,6 @@ paths:
         '200':
           description: ''
       parameters:
-        - name: User-Agent
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: yaak
         - name: Accept
           in: header
           description: ''
@@ -122,13 +101,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: User-Agent
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: yaak
         - name: Accept
           in: header
           description: ''
@@ -161,13 +133,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: User-Agent
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: yaak
         - name: Accept
           in: header
           description: ''
@@ -203,13 +168,6 @@ paths:
         '200':
           description: ''
       parameters:
-        - name: User-Agent
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: yaak
         - name: Accept
           in: header
           description: ''
@@ -239,13 +197,6 @@ paths:
         '200':
           description: ''
       parameters:
-        - name: User-Agent
-          in: header
-          description: ''
-          required: true
-          schema:
-            type: string
-          example: yaak
         - name: Accept
           in: header
           description: ''
